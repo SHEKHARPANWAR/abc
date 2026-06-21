@@ -1,0 +1,6 @@
+{
+  "name": "Syrma SGS Equipment Management System",
+  "description": "Enterprise-grade Asset Register and Calibration Tracking dashboard featuring a professional industrial theme.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

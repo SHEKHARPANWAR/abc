@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Syrma SGS Equipment Management System</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <!-- Stylesheets compiled by Vite -->
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body class="min-h-full flex flex-col antialiased">
+
+    <!-- Sticky Top Navigation -->
+    <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-md border-b border-cyan-500/10 shadow-lg no-print">
+      <div class="max-w-none w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
+        <div class="flex items-center justify-between h-16 gap-4">
+          
+          <!-- Brand Logo and Corporate Titles -->
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)] border border-cyan-400/30">
+              <i class="fa-solid fa-microchip text-slate-950 text-xl font-bold animate-pulse"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="text-white font-black tracking-wider text-sm sm:text-base uppercase">Syrma <span class="text-cyan-400">SGS</span> Technology</span>
+                <span class="inline-block px-1.5 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">LTD</span>
+              </div>
+              <h1 class="text-xs text-slate-400 font-medium">Equipment Management System</h1>
+            </div>
+          </div>
+
+          <!-- Title Text Banner for Larger Screens Header -->
+          <div class="hidden lg:flex flex-col text-center">
+            <span class="text-xs uppercase font-bold tracking-widest text-slate-500">Corporate Registry</span>
+            <span class="text-slate-300 font-medium text-xs">Asset Register & Calibration Tracking</span>
+          </div>
+
+          <!-- Navigation Interactive Controls -->
+          <div class="flex-1 max-w-xs md:max-w-sm hidden sm:block relative">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-search text-slate-500 text-sm"></i>
+              </span>
+              <input 
+                type="text" 
+                id="globalSearch" 
+                class="w-full bg-slate-900/60 border border-slate-800 text-slate-200 pl-10 pr-4 py-1.5 rounded-md focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 text-xs transition-colors duration-200 placeholder-slate-500" 
+                placeholder="Global search by Asset, S/N, Name, Owner..." />
+            </div>
+          </div>
+
+          <!-- Notifications & Profile Menu -->
+          <div class="flex items-center gap-3.5">
+            <!-- Notifications Icon Badge -->
+            <div class="relative cursor-pointer group" onclick="showToast('Your notification queue is clean. Calibration checks complete.', 'info')">
+              <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-400 led-glow-cyan animate-ping"></span>
+              <span class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-500 led-glow-cyan"></span>
+              <div class="w-8 h-8 rounded bg-slate-900 border border-slate-800/80 hover:bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-cyan-400 transition-colors duration-150">
+                <i class="fa-solid fa-bell text-sm"></i>
+              </div>
+            </div>
+
+            <!-- AUTHENTICATED USER PROFILE SLOT (Top Right Corner) -->
+            <div id="userProfileHeader" class="flex items-center gap-3 border-l border-slate-800 pl-3 hidden">
+              <div class="text-right hidden sm:block select-none">
+                <p id="headerUserName" class="text-xs font-semibold text-slate-300 leading-none">-</p>
+                <span id="headerUserRole" class="inline-block text-[9px] text-cyan-400 font-mono leading-none mt-1 uppercase tracking-wider bg-cyan-950/40 px-1 border border-cyan-500/20 rounded">-</span>
+              </div>
+              <div id="headerUserAvatar" class="w-8 h-8 rounded-full flex items-center justify-center font-extrabold text-xs shadow-lg border select-none transition-transform hover:scale-105 duration-200">
+                -
+              </div>
+              <button onclick="handleLogout()" class="w-7 h-7 flex items-center justify-center rounded border border-slate-800 hover:border-rose-500/40 bg-slate-900/60 hover:bg-rose-950/20 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer" title="Log out session">
+                <i class="fa-solid fa-right-from-bracket text-[10px]"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="flex-1 max-w-none w-full mx-auto p-4 sm:p-6 lg:p-8 xl:p-12 space-y-6">
+
+      <!-- AUTHENTICATION VIEW CONTAINER (Sign up & Login Pages) -->
+      <section id="authContainer" class="w-full max-w-md mx-auto my-8 sm:my-12 glass-panel p-6 sm:p-8 rounded-xl bg-gradient-to-b from-slate-900/80 to-slate-950/95 border border-cyan-500/20 shadow-2xl relative overflow-hidden transition-all duration-300">
+        <!-- Glow Effect backdrop -->
+        <div class="absolute -top-12 -left-12 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-12 -right-12 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- App Brand Header -->
+        <div class="text-center mb-6 select-none">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.3)] border border-cyan-400/30 mx-auto mb-3">
+            <i class="fa-solid fa-microchip text-slate-950 text-2xl font-bold animate-pulse"></i>
+          </div>
+          <h2 class="text-white text-lg font-extrabold tracking-wider uppercase font-mono">Syrma <span class="text-cyan-400">SGS</span> Technology</h2>
+          <p class="text-slate-400 text-[11px] uppercase tracking-widest mt-1 font-mono">Calibration Bureau Login</p>
+        </div>
+
+        <!-- Toggle Login / Sign Up Tabs inside Card -->
+        <div class="flex border-b border-slate-800 mb-6">
+          <button id="authTabLogin" onclick="switchAuthMode('login')" class="flex-1 pb-3 text-sm font-bold text-cyan-400 border-b-2 border-cyan-400 transition-colors uppercase tracking-wider cursor-pointer select-none">
+            Sign In
+          </button>
+          <button id="authTabRegister" onclick="switchAuthMode('register')" class="flex-1 pb-3 text-sm font-semibold text-slate-500 hover:text-slate-300 border-b-2 border-transparent transition-colors uppercase tracking-wider cursor-pointer select-none">
+            Sign Up
+          </button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <form id="authLoginForm" class="space-y-4 text-xs" onsubmit="handleLoginSubmit(event)">
+          <div>
+            <label for="loginEmail" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Email Address</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-envelope text-slate-500"></i>
+              </span>
+              <input type="email" id="loginEmail" required class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-slate-600" placeholder="admin@syrmasgs.com" />
+            </div>
+          </div>
+
+          <div>
+            <label for="loginPassword" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Password</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-lock text-slate-500"></i>
+              </span>
+              <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-••••••••" placeholder="••••••••" />
+            </div>
+          </div>
+
+          <!-- Remember Me Checkbox -->
+          <div class="flex items-center justify-between text-[11px] pt-1">
+            <label class="flex items-center gap-2 cursor-pointer text-slate-400 select-none">
+              <input type="checkbox" id="loginRemember" class="rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-cyan-500/35 accent-cyan-500 cursor-pointer" />
+              <span>Remember Me</span>
+            </label>
+            <button type="button" onclick="showToast('To retrieve system access, contact your administrator.', 'info')" class="text-cyan-400 hover:underline cursor-pointer">Forgot passcode?</button>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold uppercase tracking-wider rounded transition-colors cursor-pointer text-center mt-2 shadow-lg shadow-cyan-500/10">
+            Admin Login <i class="fa-solid fa-arrow-right-to-bracket ml-1.5"></i>
+          </button>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="authRegisterForm" class="space-y-4 text-xs hidden" onsubmit="handleRegisterSubmit(event)">
+          <div>
+            <label for="regFullName" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Full Name <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-user text-slate-500"></i>
+              </span>
+              <input type="text" id="regFullName" required class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-slate-600" placeholder="e.g. Ramesh Kumar" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label for="regEmployeeId" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Employee ID <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fa-solid fa-id-card text-slate-500"></i>
+                </span>
+                <input type="text" id="regEmployeeId" required class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-slate-600 uppercase" placeholder="SGS-045" />
+              </div>
+            </div>
+
+            <div>
+              <label for="regRole" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Access Role <span class="text-rose-500">*</span></label>
+              <select id="regRole" required class="w-full bg-slate-950 border border-slate-800 rounded px-2.5 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all h-[38px] cursor-pointer">
+                <option value="Admin">Admin</option>
+                <option value="Lead Inspector">Lead Inspector</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Quality Technician">Quality Technician</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="regEmail" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Email Address <span class="text-rose-500">*</span></label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-envelope text-slate-500"></i>
+              </span>
+              <input type="email" id="regEmail" required class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-slate-600" placeholder="ramesh.k@syrmasgs.com" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label for="regPassword" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Password <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fa-solid fa-lock text-slate-500"></i>
+                </span>
+                <input type="password" id="regPassword" required minlength="6" class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-••••••" placeholder="••••••" />
+              </div>
+            </div>
+
+            <div>
+              <label for="regConfirmPassword" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Confirm Password <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fa-solid fa-shield text-slate-500"></i>
+                </span>
+                <input type="password" id="regConfirmPassword" required minlength="6" class="w-full bg-slate-950 border border-slate-800 rounded pl-9 pr-3 py-2.5 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder-••••••" placeholder="••••••" />
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold uppercase tracking-wider rounded transition-colors cursor-pointer text-center mt-2 shadow-lg shadow-emerald-500/10">
+            Register Account <i class="fa-solid fa-user-plus ml-1.5"></i>
+          </button>
+        </form>
+
+        <div class="mt-4 p-3 bg-slate-900/60 rounded border border-slate-850 text-[10px] text-slate-400 leading-relaxed text-center">
+          <i class="fa-solid fa-circle-info text-cyan-400 mr-1 animate-pulse"></i> Since this is configured in LocalStorage, user records persist on your browser client and can be updated locally.
+        </div>
+      </section>
+
+      <!-- AUTHENTICATED WORKSPACE CONTAINER -->
+      <div id="authenticatedWorkspace" class="hidden space-y-6">
+
+        <!-- Navigation Tabs bar for switching between SMT Equipment and Users -->
+        <section id="navigationTabs" class="flex items-center gap-2 border-b border-slate-800 pb-1.5 no-print select-none">
+          <button id="tabEquipment" onclick="switchThemeTab('equipment')" class="px-4 py-2 text-xs font-bold uppercase tracking-wider text-cyan-400 border-b-2 border-cyan-400 transition-all cursor-pointer flex items-center gap-2">
+            <i class="fa-solid fa-industry"></i> Equipment Tracking
+          </button>
+          <button id="tabUserManagement" onclick="switchThemeTab('users')" class="hidden px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-slate-350 border-b-2 border-transparent transition-all cursor-pointer flex items-center gap-2">
+            <i class="fa-solid fa-users-gear"></i> User Hub Admin <span class="bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 px-1.5 py-0.5 rounded text-[9px] font-mono" id="userCountBadge">0</span>
+          </button>
+        </section>
+
+        <!-- Breadcrumbs and Export List Frame -->
+        <section class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-5 no-print" id="dashboard-header-panel">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-semibold text-white tracking-tight">Active Production Registry</h2>
+          <div class="flex flex-wrap items-center gap-3 mt-1">
+            <p class="text-xs text-slate-400">Status of critical electronics calibration machines</p>
+            <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-800 px-2.5 py-0.5 rounded-full select-none">
+              <span id="dbLoaderIcon" class="w-1.5 h-1.5 rounded-full bg-amber-400 led-glow-yellow"></span>
+              <span id="dbStatusLabel" class="text-[9px] font-mono text-slate-450 uppercase font-bold tracking-wide">Cloud connection initializing...</span>
+            </div>
+            <button onclick="openSchemaModal()" class="text-[9px] font-semibold bg-cyan-950/40 hover:bg-cyan-950/80 border border-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded-full flex items-center gap-1 cursor-pointer transition-all">
+              <i class="fa-solid fa-database text-[8px]"></i> Setup Supabase SQL
+            </button>
+          </div>
+        </div>
+        
+        <!-- EXPORT TOOLBAR -->
+        <div class="flex items-center flex-wrap gap-2" id="exportToolbar">
+          <button id="exportExcelBtn" class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 hover:border-emerald-500 text-emerald-400 rounded text-xs font-medium cursor-pointer transition-all duration-150 hover:bg-emerald-500/20">
+            <i class="fa-solid fa-file-excel btn-glow"></i>Export Excel
+          </button>
+          <button id="exportCsvBtn" class="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-500 text-cyan-400 rounded text-xs font-medium cursor-pointer transition-all duration-150 hover:bg-cyan-500/20">
+            <i class="fa-solid fa-file-csv"></i>Export CSV
+          </button>
+          <button id="printListBtn" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 rounded text-xs font-medium cursor-pointer transition-all duration-150 hover:bg-slate-800">
+            <i class="fa-solid fa-print"></i>Print List
+          </button>
+        </div>
+      </section>
+
+      <!-- Toast Container (Absolute Alert Notification Stack) -->
+      <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-md w-full no-print"></div>
+
+      <!-- DASHBOARD KPIs -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print" id="kpiGrid">
+        
+        <!-- Total Equipment -->
+        <div id="kpiCard-Total" class="glass-panel p-4 rounded-xl flex items-center justify-between gap-4 bg-gradient-to-b from-slate-900/60 to-slate-950/90 hover:scale-[1.02] transition-transform duration-300">
+          <div class="space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Equipment</span>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiTotal" class="text-2xl sm:text-3xl font-bold font-mono text-white">0</span>
+              <span class="text-emerald-400 text-xs font-medium"><i class="fa-solid fa-arrow-up text-[10px] mr-1"></i>Active</span>
+            </div>
+            <p class="text-[10px] text-slate-500">Global registered machines</p>
+          </div>
+          <div class="w-12 h-12 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+            <i class="fa-solid fa-industry text-xl"></i>
+          </div>
+        </div>
+
+        <!-- Active Equipment -->
+        <div id="kpiCard-Active" class="glass-panel p-4 rounded-xl flex items-center justify-between gap-4 bg-gradient-to-b from-slate-900/60 to-slate-950/90 hover:scale-[1.02] transition-transform duration-300">
+          <div class="space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Status</span>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiActive" class="text-2xl sm:text-3xl font-bold font-mono text-white">0</span>
+              <span class="text-cyan-400 text-xs font-medium"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i>Live</span>
+            </div>
+            <p class="text-[10px] text-slate-500">Operation floor runtime</p>
+          </div>
+          <div class="w-12 h-12 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <i class="fa-solid fa-circle-play text-xl leading-none"></i>
+          </div>
+        </div>
+
+        <!-- Calibration Due Soon -->
+        <div id="kpiCard-DueSoon" class="glass-panel p-4 rounded-xl flex items-center justify-between gap-4 bg-gradient-to-b from-slate-900/60 to-slate-950/90 hover:scale-[1.02] transition-transform duration-300">
+          <div class="space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Due Within 30d</span>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiDueSoon" class="text-2xl sm:text-3xl font-bold font-mono text-amber-400 text-amber-500/80">0</span>
+              <span class="text-amber-400 text-[10px] font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Warning</span>
+            </div>
+            <p class="text-[10px] text-slate-500">Schedule check pending</p>
+          </div>
+          <div class="w-12 h-12 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+            <i class="fa-solid fa-clock-rotate-left text-xl"></i>
+          </div>
+        </div>
+
+        <!-- Overdue Calibration -->
+        <div id="kpiCard-Overdue" class="glass-panel p-4 rounded-xl flex items-center justify-between gap-4 bg-gradient-to-b from-slate-900/60 to-slate-950/90 hover:scale-[1.02] transition-transform duration-300">
+          <div class="space-y-1">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Calibration Overdue</span>
+            <div class="flex items-baseline gap-2">
+              <span id="kpiOverdue" class="text-2xl sm:text-3xl font-bold font-mono text-rose-500">0</span>
+              <span class="text-rose-400 text-[10px] font-bold"><i class="fa-solid fa-radiation mr-1"></i>Critical</span>
+            </div>
+            <p class="text-[10px] text-slate-500">Banned from usage</p>
+          </div>
+          <div class="w-12 h-12 rounded-lg bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500">
+            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Main Columns Grid (Form & Table Dashboard layout) -->
+      <section id="workspaceGrid" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start no-print">
+
+        <!-- ADD EQUIPMENT FORM CONTAINER -->
+        <article id="equipmentRegisterFormContainer" class="lg:col-span-4 glass-panel p-5 rounded-xl space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 led-glow-cyan"></span>
+              <h3 id="formHeading" class="text-sm font-bold uppercase tracking-wider text-slate-200">Add New Production Asset</h3>
+            </div>
+            <p class="text-[11px] text-slate-500">Register ISO Calibration details for corporate equipment</p>
+          </div>
+
+          <!-- EQUIPMENT FORM BODY -->
+          <form id="equipmentForm" class="space-y-4 text-xs font-medium">
+            
+            <!-- Row 1: Asset Number & Serial -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="relative">
+                <label for="assetNumber" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none font-sans">
+                  Asset Number <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="assetNumber" 
+                  required
+                  placeholder="EQ-2026-###" 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 font-mono focus:ring-1 focus:ring-cyan-500 transition-colors uppercase" />
+              </div>
+
+              <div>
+                <label for="serialNumber" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                  Serial Number <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="serialNumber" 
+                  required
+                  placeholder="SGS-####-#####" 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 font-mono focus:ring-1 focus:ring-cyan-500 transition-colors" />
+              </div>
+            </div>
+
+            <!-- Row 2: Machine Name (Autocomplete Supported) -->
+            <div class="relative">
+              <label for="machineName" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                Machine Name <span class="text-rose-500">*</span>
+              </label>
+              <div class="relative">
+                <input 
+                  type="text" 
+                  id="machineName" 
+                  required
+                  placeholder="Type or select manufacturing device name..." 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" />
+              </div>
+            </div>
+
+            <!-- Row 3: Calibration Due Date & Status -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="calibrationDueDate" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                  Calibration Due Date <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="date" 
+                  id="calibrationDueDate" 
+                  required
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors font-sans" />
+              </div>
+
+              <div>
+                <label for="equipmentStatus" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                  Equipment Status <span class="text-rose-500">*</span>
+                </label>
+                <select 
+                  id="equipmentStatus" 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors">
+                  <option value="Active" selected>Active Operations</option>
+                  <option value="Calibration Pending">Calibration Pending</option>
+                  <option value="Under Repair">Under Repair</option>
+                  <option value="Retired">Retired / Archive</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 4: Department & Location -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div class="relative">
+                <label for="department" class="block text-[11px] text-slate-400 font-medium mb-1.5">
+                  Department <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="department" 
+                  required
+                  placeholder="e.g. SMT Operations..." 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" />
+              </div>
+
+              <div class="relative">
+                <label for="location" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                  Location <span class="text-rose-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="location" 
+                  required
+                  placeholder="e.g., SMT Room Line 2" 
+                  class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" />
+              </div>
+            </div>
+
+            <!-- Row 5: Equipment Owner -->
+            <div class="relative">
+              <label for="equipmentOwner" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                Equipment Owner (Custodian) <span class="text-rose-500">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="equipmentOwner" 
+                required
+                placeholder="Search or enter custodian mechanical engineer name..." 
+                class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500" />
+            </div>
+
+            <!-- Row 6: Remarks -->
+            <div>
+              <label for="remarks" class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                Remarks / Engineering Log
+              </label>
+              <textarea 
+                id="remarks" 
+                rows="2" 
+                placeholder="Optional machine log remarks (sensor status, traceabilities or nozzle health log issues)..." 
+                class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors"></textarea>
+            </div>
+
+            <!-- Row 7: Drag & Drop Document Area -->
+            <div>
+              <label class="block text-[11px] text-slate-400 font-medium mb-1.5 select-none">
+                Upload Compliance Documents (PDF, JPG, JPEG, PNG Only)
+              </label>
+              
+              <!-- DRAG ZONE -->
+              <div 
+                id="dropZone" 
+                class="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/40 p-4 rounded-lg text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center gap-1.5">
+                <i class="fa-solid fa-cloud-arrow-up text-cyan-400 text-lg animate-bounce"></i>
+                <div class="text-[11px] text-slate-300">Drag files here or <span class="text-cyan-400">browse local files</span></div>
+                <div class="text-[9px] text-slate-500">PDF, JPG, PNG files accepted. Maximum size 15 MB.</div>
+              </div>
+              <input type="file" id="fileInput" class="hidden" multiple accept=".pdf,.png,.jpg,.jpeg" />
+
+              <!-- PREVIEW CHIPS -->
+              <div id="uploadChips" class="flex flex-wrap gap-2 mt-3 p-2 bg-slate-950/60 rounded border border-slate-900/80 hidden"></div>
+            </div>
+
+            <!-- Form Action Submit bar Buttons -->
+            <div class="flex items-center gap-2 pt-2">
+              <button 
+                type="submit" 
+                id="submitFormBtn" 
+                class="flex-1 py-2 px-3 text-xs font-semibold bg-cyan-500 hover:bg-cyan-600 active:bg-cyan-700 text-slate-950 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all cursor-pointer rounded text-center">
+                <i class="fa-solid fa-plus-circle mr-2"></i>Register Equipment
+              </button>
+              <button 
+                type="button" 
+                id="cancelFormBtn" 
+                class="px-3 py-2 border border-slate-800 hover:border-slate-700 hover:bg-slate-900 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer rounded">
+                Reset
+              </button>
+            </div>
+
+          </form>
+        </article>
+
+        <!-- EQUIPMENT TABLE INTERFACE -->
+        <article id="equipmentTableInterfaceContainer" class="lg:col-span-8 space-y-4">
+          
+          <!-- Inner Controls search toolbar inside table -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950/40 p-3 rounded-lg border border-slate-800/80">
+            <h4 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+              <i class="fa-solid fa-gears text-cyan-400"></i>Equipment Ledger
+            </h4>
+            <div class="w-full sm:max-w-xs relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-search text-slate-500 text-xs"></i>
+              </span>
+              <input 
+                type="text" 
+                id="tableSearch" 
+                class="w-full bg-slate-900/90 border border-slate-800 text-slate-200 pl-8 pr-3 py-1.5 rounded text-xs focus:outline-none focus:border-cyan-500" 
+                placeholder="Search ledger records..." />
+            </div>
+          </div>
+
+          <!-- TABLE CONTAINMENT (Sticky Headers) -->
+          <div id="equipmentTableContainer" class="glass-panel rounded-xl overflow-hidden shadow-2xl border border-slate-800/60 relative overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[750px]">
+              <thead>
+                <tr class="bg-slate-950 text-slate-400 text-[10px] font-bold uppercase tracking-wider select-none">
+                  <th class="px-3 py-3.5 text-center w-[50px] border-b border-cyan-500/20">QR</th>
+                  <th class="px-4 py-3.5 w-[110px] border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="assetNumber">Asset # <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 w-[110px] border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="serialNumber">S/N <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="machineName">Machine Info <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 w-[130px] border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="calibrationDueDate">Calibration Due <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="location">Location <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 border-b border-cyan-500/20 cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="equipmentOwner">Owner <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-3 py-3.5 text-center w-[60px] border-b border-cyan-500/20">Docs</th>
+                  <th class="px-4 py-3.5 w-[100px] border-b border-cyan-500/20 text-center cursor-pointer hover:bg-slate-900 hover:text-white" data-sort="equipmentStatus">Status <i class="fa-solid fa-sort text-slate-600 ml-1 text-xs"></i></th>
+                  <th class="px-4 py-3.5 text-right w-[110px] border-b border-cyan-500/20">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="equipmentTableBody" class="divide-y divide-slate-800/40 text-xs">
+                <!-- Javascript will populate rows dynamically -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE (Hidden initially) -->
+          <div id="emptyState" class="glass-panel rounded-xl p-12 text-center border-dashed border-2 border-slate-800 flex flex-col items-center justify-center gap-3 hidden">
+            <div class="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 border border-slate-800">
+              <i class="fa-solid fa-box-open text-2xl"></i>
+            </div>
+            <h4 class="text-slate-300 font-bold text-sm">No registry elements collected</h4>
+            <p class="text-xs text-slate-500 max-w-sm empty-message">No equipment found. Add a new asset using the form above.</p>
+            <button id="seedSampleDataBtn" type="button" class="mt-2 px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500 hover:text-slate-950 border border-cyan-500/30 font-semibold rounded text-xs text-cyan-400 hover:scale-[1.03] transition-all cursor-pointer">
+              <i class="fa-solid fa-database mr-1.5 animate-pulse"></i>Seed Demo Data to Supabase
+            </button>
+          </div>
+
+        </article>
+
+      </section>
+
+      <!-- User Management Panel inside main container -->
+      <section id="userManagementPanel" class="hidden space-y-4 no-print select-none">
+        <div class="glass-panel p-5 rounded-xl border border-slate-800 bg-gradient-to-b from-slate-900/60 to-slate-950/90 shadow-2xl">
+          <div class="border-b border-slate-800 pb-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 led-glow-cyan animate-pulse"></span>
+                <h3 class="text-sm font-bold uppercase tracking-wider text-slate-200">User accounts & roles console</h3>
+              </div>
+              <p class="text-[11px] text-slate-500 font-medium">ISO Standard operational permissions auditing dashboard</p>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-400 font-medium">Quick admin actions:</span>
+              <button onclick="openCreateUserModal()" class="px-3 py-1.5 bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold rounded flex items-center gap-1.5 transition-all cursor-pointer">
+                <i class="fa-solid fa-user-plus"></i> Add User
+              </button>
+            </div>
+          </div>
+
+          <!-- User list table -->
+          <div class="overflow-x-auto rounded-lg border border-slate-850/80 bg-slate-950/40">
+            <table class="w-full text-left border-collapse min-w-[650px]">
+              <thead>
+                <tr class="bg-slate-950 text-slate-400 text-[10px] font-bold uppercase tracking-wider border-b border-slate-850 select-none">
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10">User Profile</th>
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10">Employee ID</th>
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10">Email Address</th>
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10">Access Role</th>
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10">Status</th>
+                  <th class="px-4 py-3 pb-3.5 border-b border-cyan-500/10 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody" class="divide-y divide-slate-850/50 text-xs text-slate-300">
+                <!-- Javascript will populate users dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      </div> <!-- closing authenticatedWorkspace -->
+
+    </main>
+
+    <!-- FOOTER PANEL -->
+    <footer class="mt-auto bg-slate-950 border-t border-slate-900/80 py-5 text-center text-slate-500 selection:bg-slate-600 select-none text-[11px] no-print" id="systemFooter">
+      <div class="max-w-none w-full mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 space-y-1.5">
+        <p class="font-semibold text-slate-400">© 2026 Syrma SGS Technology Ltd. <span class="text-slate-600">|</span> Equipment Management System</p>
+        <p class="text-[9px] text-slate-600">Secure ISO-9001/14001 calibration metrics, certified microchip hardware deployment framework.</p>
+      </div>
+    </footer>
+
+    <!-- ====================================
+         DETAIL MODAL
+         ==================================== -->
+    <div id="detailModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md items-center justify-center p-4 hidden no-print">
+      <div class="glass-panel w-full max-w-2xl rounded-xl shadow-2xl bg-slate-950/95 overflow-hidden flex flex-col border border-cyan-500/25 max-h-[90vh]">
+        
+        <!-- Modal Head -->
+        <div class="px-5 py-4 border-b border-slate-900 flex items-center justify-between bg-gradient-to-r from-slate-900 to-slate-950">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded bg-cyan-500/10 text-cyan-400 font-mono text-[10px] font-bold" id="modalAssetNo"></span>
+            <span class="text-xs text-slate-500">Asset Record File</span>
+          </div>
+          <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white transition-colors cursor-pointer text-sm">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body (Scrollable) -->
+        <div class="p-5 flex-1 overflow-y-auto space-y-5">
+          <!-- Machine Header Title Row -->
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <h4 class="text-base sm:text-lg font-bold text-white leading-tight" id="modalTitle"></h4>
+              <span id="modalStatusBadge"></span>
+            </div>
+            <div class="text-xs text-slate-400 font-mono">Serial Reference: <span class="text-slate-300" id="modalSerialNo"></span></div>
+          </div>
+
+          <!-- Two Column Metadata split -->
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
+            
+            <!-- Left Info column -->
+            <div class="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/40 p-4 rounded-lg border border-slate-900/60 text-xs">
+              
+              <div>
+                <span class="text-slate-550 block text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-0.5">Calibration Due</span>
+                <span id="modalCalBadge"></span>
+              </div>
+
+              <div>
+                <span class="text-slate-550 block text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-0.5">Equipment Owner</span>
+                <span class="text-slate-200 font-semibold" id="modalOwner"></span>
+              </div>
+
+              <div>
+                <span class="text-slate-550 block text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-0.5">Department</span>
+                <span class="text-slate-200 font-semibold text-slate-300 flex items-center gap-1.5" id="modalDept"></span>
+              </div>
+
+              <div>
+                <span class="text-slate-550 block text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-0.5">Physical Location</span>
+                <span class="text-slate-200 font-semibold text-slate-350 flex items-center gap-1.5" id="modalLoc"></span>
+              </div>
+
+            </div>
+
+            <!-- Right QR Column -->
+            <div class="md:col-span-4 flex flex-col items-center justify-center p-3 bg-slate-900/60 rounded-lg border border-slate-900/80">
+              <span class="text-[9px] uppercase font-bold tracking-widest text-slate-400 mb-2">System Asset QR</span>
+              <div class="w-28 h-28 bg-white p-2 rounded-lg" id="modalQRBox">
+                <!-- Filled dynamically by SVG QR -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Remarks / Log panel -->
+          <div class="text-xs space-y-1 bg-slate-900/35 p-3.5 rounded border border-slate-900/50">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Engineering Log / Remarks</span>
+            <p class="text-slate-300 leading-relaxed italic" id="modalRemarks"></p>
+          </div>
+
+          <!-- Uploaded Documents compliance view -->
+          <div class="space-y-2">
+            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">Accredited Verification Certificates</span>
+            <div id="modalDocList" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <!-- Inline docs -->
+            </div>
+            
+            <!-- Dynamic PDF / Image Viewer iframe sandbox container -->
+            <div id="docPreviewFrameContainer" class="hidden mt-4 border border-cyan-500/10 p-3 bg-slate-900/60 rounded-lg space-y-2"></div>
+          </div>
+
+        </div>
+
+        <!-- Modal Footer Actions -->
+        <div class="px-5 py-3 border-t border-slate-900 flex items-center justify-end gap-2 bg-slate-900/40">
+          <button id="modalActionEdit" class="px-3 py-1.5 text-xs font-semibold border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 rounded cursor-pointer transition-colors">
+            <i class="fa-solid fa-pen mr-1.5"></i>Edit Asset
+          </button>
+          <button id="modalActionPrint" class="px-3 py-1.5 text-xs font-semibold bg-cyan-500 text-slate-950 hover:bg-cyan-600 rounded cursor-pointer transition-all">
+            <i class="fa-solid fa-print mr-1.5"></i>Print QR Label
+          </button>
+          <button onclick="closeDetailModal()" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded cursor-pointer transition-colors">
+            Close Asset
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ====================================
+         LABEL PRINT MODAL
+         ==================================== -->
+    <div id="printModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md items-center justify-center p-4 hidden no-print">
+      <div class="glass-panel w-full max-w-md rounded-xl shadow-2xl bg-slate-900/95 overflow-hidden flex flex-col border border-cyan-500/25">
+        
+        <!-- Head -->
+        <div class="px-4 py-3 border-b border-slate-800/80 flex items-center justify-between">
+          <span class="text-xs font-semibold text-cyan-400"><i class="fa-solid fa-barcode mr-1.5"></i>Thermal Label Generator</span>
+          <button onclick="closePrintModal()" class="text-slate-400 hover:text-white transition-colors cursor-pointer text-xs"><i class="fa-solid fa-times"></i></button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 flex flex-col items-center justify-center space-y-4">
+          <p class="text-xs text-slate-400 text-center">Thermal Preview Scale: (100 mm × 50 mm approximate physical layout)</p>
+          
+          <!-- PRINT CONTAINER (We grab this innerHTML to output direct print) -->
+          <div id="thermalLabelPrintArea" class="w-full">
+            <div class="thermal-label-container p-3 rounded mx-auto flex">
+              
+              <!-- Content left side -->
+              <div class="label-content flex flex-col justify-between" style="flex: 1; font-family: 'Inter', sans-serif; font-size: 10px; color: black; line-height: 1.25;">
+                <div class="label-title" style="font-size: 11px; font-weight: 700; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 2px; margin-bottom: 2px; color: black;">
+                  Syrma SGS Technology Ltd
+                </div>
+                
+                <div class="grid-info" style="display: grid; grid-template-columns: auto 1fr; gap: 1px 6px; color: black;">
+                  <span class="grid-lbl" style="font-weight: 700; font-size: 9px; text-transform: uppercase;">Asset No:</span>
+                  <span class="grid-val mono-font" id="lblAssetNo" style="font-family: 'IBM Plex Mono', monospace; font-weight: 700; font-size: 11px;"></span>
+                  
+                  <span class="grid-lbl" style="font-weight: 700; font-size: 9px; text-transform: uppercase;">Device:</span>
+                  <span class="grid-val" id="lblMachineName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;"></span>
+                  
+                  <span class="grid-lbl" style="font-weight: 700; font-size: 9px; text-transform: uppercase;">Serial:</span>
+                  <span class="grid-val" id="lblSerialNo"></span>
+
+                  <span class="grid-lbl" style="font-weight: 700; font-size: 9px; text-transform: uppercase;">Location:</span>
+                  <span class="grid-val" id="lblLocation"></span>
+                </div>
+
+                <div class="footer-stamp" style="font-size: 8px; font-weight: 700; border-top: 1px solid #777; padding-top: 2px; margin-top: 2px; color: black; display: flex; justify-content: justify; justify-items: clean;">
+                  CALIBRATION DUE: <span id="lblDueDate" class="mono-font" style="margin-left:auto; font-weight: 800; font-size: 10px;"></span>
+                </div>
+              </div>
+
+              <!-- Right QR Area -->
+              <div class="label-qr border border-black p-1 bg-white" id="lblQRCode" style="width: 80px; height: 80px; align-self: center; margin-left: 8px; border: 1.5px solid #000; display: flex; align-items: center; justify-content: center;">
+                <!-- QR Code Dynamic Vector -->
+              </div>
+
+            </div>
+          </div>
+
+          <p class="text-[10px] text-slate-500 italic"><i class="fa-solid fa-circle-info mr-1 text-[11px]"></i>Accredited compliance certificate verified on ISO-17025.</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-4 py-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-end gap-2">
+          <button id="finalActionPrint" class="px-4 py-1.5 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-slate-950 rounded cursor-pointer transition-all">
+            <i class="fa-solid fa-print mr-1.5"></i>Print to Thermal Label
+          </button>
+          <button onclick="closePrintModal()" class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 rounded cursor-pointer transition-colors">
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ====================================
+         SUPABASE SQL SCHEMA HELPER MODAL
+         ==================================== -->
+    <div id="sqlSchemaModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md items-center justify-center p-4 hidden no-print">
+      <div class="glass-panel w-full max-w-2xl rounded-xl shadow-2xl bg-slate-950/95 border border-cyan-500/30 overflow-hidden flex flex-col">
+        
+        <div class="px-5 py-4 border-b border-slate-900 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-database text-cyan-400 animate-pulse"></i>
+            <span class="text-xs uppercase tracking-wider font-bold text-slate-200">Supabase SQL Schema Setup</span>
+          </div>
+          <button type="button" onclick="closeSchemaModal()" class="text-slate-500 hover:text-white cursor-pointer"><i class="fa-solid fa-times"></i></button>
+        </div>
+
+        <div class="p-5 space-y-4 text-xs text-slate-300">
+          <p>
+            Since you migrated to a new Supabase project, you must create the <strong class="text-cyan-400">equipment</strong> table in your Supabase database before registering assets.
+          </p>
+          <p>
+            Please copy the query below, navigate to your 
+            <a href="https://supabase.com" target="_blank" rel="noopener noreferrer" class="text-cyan-400 underline font-semibold">Supabase Dashboard</a>, 
+            select your project, open the <strong class="text-slate-200">SQL Editor</strong> from the sidebar, click "New query", paste, and click <strong class="text-cyan-400">Run</strong>.
+          </p>
+
+          <div class="relative bg-slate-900 border border-slate-850 rounded p-4 font-mono text-[11px] leading-relaxed text-slate-300 overflow-x-auto select-all max-h-[250px] overflow-y-auto">
+            <pre id="sqlQueryBlock">-- Create the equipment table
+create table public.equipment (
+  asset_number text primary key,
+  serial_number text not null,
+  machine_name text not null,
+  calibration_due_date date not null,
+  location text not null,
+  equipment_owner text not null,
+  department text not null,
+  equipment_status text not null,
+  remarks text,
+  documents jsonb default '[]'::jsonb,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable Row Level Security (RLS)
+alter table public.equipment enable row level security;
+
+-- Create policy for public read/write access (Modify for production security as needed)
+create policy "Allow everyone full access" on public.equipment
+  for all using (true) with check (true);</pre>
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <button type="button" onclick="copySchemaSql()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 font-bold text-slate-950 rounded uppercase tracking-wider transition-colors cursor-pointer text-center flex items-center gap-2">
+              <i class="fa-solid fa-copy"></i> Copy Query SQL
+            </button>
+            <button type="button" onclick="closeSchemaModal()" class="px-4 py-2 border border-slate-850 hover:border-slate-700 text-slate-400 hover:text-white rounded transition-colors cursor-pointer">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ====================================
+         ADMIN CREATE / MODIFY USER MODAL
+         ==================================== -->
+    <div id="adminUserModal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md items-center justify-center p-4 hidden no-print">
+      <div class="glass-panel w-full max-w-md rounded-xl shadow-2xl bg-slate-950/95 border border-cyan-500/30 overflow-hidden flex flex-col">
+        
+        <div class="px-5 py-4 border-b border-slate-905 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-user-gear text-cyan-400" id="adminUserModalIcon"></i>
+            <span class="text-xs uppercase tracking-wider font-bold text-slate-200" id="adminUserModalTitle">User Account Console</span>
+          </div>
+          <button type="button" onclick="closeAdminUserModal()" class="text-slate-500 hover:text-white cursor-pointer"><i class="fa-solid fa-times"></i></button>
+        </div>
+
+        <form id="adminUserForm" onsubmit="handleAdminUserSubmit(event)" class="p-5 space-y-4 text-xs">
+          <input type="hidden" id="adminUserMode" value="create" /> <!-- 'create' or 'edit' -->
+          <input type="hidden" id="adminUserOldEmail" />
+          
+          <div>
+            <label for="adminUserFullName" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Full Name <span class="text-rose-500">*</span></label>
+            <input type="text" id="adminUserFullName" required class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" placeholder="e.g. Ramesh Kumar" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div>
+              <label for="adminUserEmployeeId" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Employee ID <span class="text-rose-500">*</span></label>
+              <input type="text" id="adminUserEmployeeId" required class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors uppercase" placeholder="e.g. SGS-024" />
+            </div>
+
+            <div>
+              <label for="adminUserRole" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Access Role <span class="text-rose-500">*</span></label>
+              <select id="adminUserRole" required class="w-full bg-slate-900 border border-slate-800 rounded px-2.5 py-2 text-slate-250 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all h-[32px] cursor-pointer">
+                <option value="Admin">Admin</option>
+                <option value="Lead Inspector">Lead Inspector</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Quality Technician">Quality Technician</option>
+                <option value="Viewer">Viewer</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="adminUserEmail" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold">Email Address <span class="text-rose-500">*</span></label>
+            <input type="email" id="adminUserEmail" required class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" placeholder="e.g. user@syrmasgs.com" />
+          </div>
+
+          <div id="adminUserPasswordContainer">
+            <label id="adminUserPasswordLabel" for="adminUserPassword" class="block text-[11px] uppercase font-mono text-slate-400 mb-1.5 font-semibold font-semibold">Password <span class="text-rose-500">*</span></label>
+            <input type="password" id="adminUserPassword" minlength="6" class="w-full bg-slate-900 border border-slate-800 rounded px-3 py-2 text-slate-200 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-colors" placeholder="Min. 6 characters" />
+          </div>
+
+          <div class="flex items-center gap-2 pt-2 font-semibold">
+            <button type="submit" class="flex-1 py-2 bg-cyan-500 hover:bg-cyan-600 font-bold text-slate-950 rounded uppercase tracking-wider transition-colors cursor-pointer text-center" id="adminUserModalSubmitBtn">Submit</button>
+            <button type="button" onclick="closeAdminUserModal()" class="px-3 py-2 border border-slate-850 hover:border-slate-700 text-slate-400 hover:text-white rounded transition-colors cursor-pointer">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <!-- Compile Engine and Application trigger -->
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
